@@ -1,0 +1,3 @@
+tqdm==4.45.0
+arcgis==1.8.0.post1
+requests==2.23.0

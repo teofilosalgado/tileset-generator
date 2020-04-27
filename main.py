@@ -5,20 +5,27 @@ from authentication import Authentication
 from downloader import Downloader
 import pathlib
 import shutil
+import json
 import glob
 import os
 
-MAPSERVER_URL = "https://tiledbasemaps.arcgis.com/arcgis/rest/services/World_Imagery/MapServer"
-GENERATE_TOKEN_URL = "https://www.arcgis.com/sharing/rest/generateToken"
-
 if __name__ == "__main__":
+
+    with open("config.json", "r") as config_file:
+        config = json.loads(config_file)
+
+    MAPSERVER_URL = config["mapServerUrl"]
+    GENERATE_TOKEN_URL = config["generateTokenUrl"]
+    USERNAME = os.getenv('TILESET_GENERATOR_USERNAME')
+    PASSWORD = os.getenv('TILESET_GENERATOR_PASSWORD')
+
     tiles_folder = pathlib.Path('tiles')
     if tiles_folder.exists() and tiles_folder.is_dir():
         shutil.rmtree("tiles")
     os.mkdir("tiles")
 
     authentication = Authentication(GENERATE_TOKEN_URL)
-    token = authentication.authenticate("teofilosalgado", "Casa32123955#")
+    token = authentication.authenticate(USERNAME, PASSWORD)
     downloader = Downloader(token, MAPSERVER_URL)
 
     for shapefile in glob.glob("shapefiles/*.shp"):
