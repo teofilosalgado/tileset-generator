@@ -12,7 +12,7 @@ import os
 if __name__ == "__main__":
 
     with open("config.json", "r") as config_file:
-        config = json.loads(config_file)
+        config = json.load(config_file)
 
     MAPSERVER_URL = config["mapServerUrl"]
     GENERATE_TOKEN_URL = config["generateTokenUrl"]
