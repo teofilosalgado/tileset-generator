@@ -4,6 +4,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)  # nopep8
 from authentication import Authentication
 from downloader import Downloader
 import pathlib
+import tpkutils
 import shutil
 import json
 import glob
@@ -16,6 +17,9 @@ if __name__ == "__main__":
 
     MAPSERVER_URL = config["mapServerUrl"]
     GENERATE_TOKEN_URL = config["generateTokenUrl"]
+    MINIMUM_ZOOM_LEVEL = config["minimumZoomLevel"]
+    MAXIMUM_ZOOM_LEVEL = config["maximumZoomlevel"]
+
     USERNAME = os.getenv('TILESET_GENERATOR_USERNAME')
     PASSWORD = os.getenv('TILESET_GENERATOR_PASSWORD')
 
@@ -29,8 +33,14 @@ if __name__ == "__main__":
     downloader = Downloader(token, MAPSERVER_URL)
 
     for shapefile in glob.glob("shapefiles/*.shp"):
-        downloaded_tpk_path = downloader.download(shapefile, "10")
+        zoom_levels = f"{str(MINIMUM_ZOOM_LEVEL)}-{str(MAXIMUM_ZOOM_LEVEL)}"
+        downloaded_tpk_location = downloader.download(shapefile, zoom_levels)
+        shapefile_tiles_folder = pathlib.Path(
+            downloaded_tpk_location).parents[1]
 
-        # with tpkutils.TPK("temp.tpk") as tpk:
-        #     tpk.to_disk('tiles/T1600055', zoom=[11], drop_empty=True)
-        # os.remove("temp.tpk")
+        print("Generating tiles...")
+        with tpkutils.TPK(downloaded_tpk_location) as tpk:
+            zoom_list = list(range(MINIMUM_ZOOM_LEVEL, MAXIMUM_ZOOM_LEVEL + 1))
+            tpk.to_disk(f"{shapefile_tiles_folder}/xyz",
+                        zoom=zoom_list, drop_empty=True)
+        print("Done!")
