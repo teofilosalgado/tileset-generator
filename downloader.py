@@ -16,8 +16,6 @@ class Downloader:
         self.mapserver_url = mapserver_url
 
     def download(self, shapefile, levels):
-
-        print(f"\nWorking on shapefile: {shapefile}")
         featureset = self._shapefile_to_featureset(shapefile)
         result = self._estimate_export_tiles_size(featureset, levels)
         print(f"Total tiles to export: {result['totalTilesToExport']}")
@@ -34,6 +32,19 @@ class Downloader:
         self._download_tpk(url, f"{tpk_folder_path}/layer.tpk")
         return f"{tpk_folder_path}/layer.tpk"
 
+    def _result_handler(self, response):
+        try:
+            job = response.json()['jobId']
+            results = self._get_job_results(job)
+            return results['value']
+        except KeyError:
+            self._exception_handler(response)
+
+    def _exception_handler(self, response):
+        error = response.json()['error']
+        if error["code"] == 498:
+            raise exceptions.InvalidTokenException
+
     def _estimate_export_tiles_size(self, featureset, levels):
         data = {"f": "json",
                 "storageFormatType": "Compact",
@@ -44,9 +55,7 @@ class Downloader:
                 "areaOfInterest": featureset.to_json}
         response = requests.post(
             f"{self.mapserver_url}/estimateExportTilesSize", data=data, headers=self.headers)
-        job = response.json()['jobId']
-        results = self._get_job_results(job)
-        return results['value']
+        return self._result_handler(response)
 
     def _export_tiles(self, featureset, levels):
         data = {"f": "json",
@@ -60,9 +69,7 @@ class Downloader:
                 "areaOfInterest": featureset.to_json}
         response = requests.post(
             f"{self.mapserver_url}/exportTiles", data=data, headers=self.headers)
-        job = response.json()['jobId']
-        results = self._get_job_results(job)
-        return results['value']
+        return self._result_handler(response)
 
     def _get_job_status(self, job):
         parameters = {"f": "json"}

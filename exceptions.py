@@ -4,3 +4,7 @@ class JobFailedException(Exception):
 
 class DownloadFailedException(Exception):
     pass
+
+
+class InvalidTokenException(Exception):
+    pass
