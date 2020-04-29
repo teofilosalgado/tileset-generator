@@ -51,6 +51,9 @@ def main():
                         range(MINIMUM_ZOOM_LEVEL, MAXIMUM_ZOOM_LEVEL + 1))
                     tpk.to_disk(f"{shapefile_tiles_folder}/xyz",
                                 zoom=zoom_list, drop_empty=True)
+
+                shutil.make_archive(
+                    f"{shapefile_tiles_folder}/zip/layer", 'zip', f"{shapefile_tiles_folder}/xyz")
                 print("Done!")
                 success = True
             except exceptions.InvalidTokenException:
