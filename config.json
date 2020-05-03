@@ -2,5 +2,8 @@
   "mapServerUrl": "https://tiledbasemaps.arcgis.com/arcgis/rest/services/World_Imagery/MapServer",
   "generateTokenUrl": "https://www.arcgis.com/sharing/rest/generateToken",
   "minimumZoomLevel": 9,
-  "maximumZoomlevel": 10
+  "maximumZoomlevel": 10,
+  "tpk": false,
+  "xyz": false,
+  "zip": true
 }

@@ -24,6 +24,10 @@ def main():
     USERNAME = os.getenv('TILESET_GENERATOR_USERNAME')
     PASSWORD = os.getenv('TILESET_GENERATOR_PASSWORD')
 
+    TPK = config["tpk"]
+    XYZ = config["xyz"]
+    ZIP = config["zip"]
+
     tiles_folder = pathlib.Path('tiles')
     if tiles_folder.exists() and tiles_folder.is_dir():
         shutil.rmtree("tiles")
@@ -45,15 +49,26 @@ def main():
                 shapefile_tiles_folder = pathlib.Path(
                     downloaded_tpk_location).parents[1]
 
-                print("Generating tiles...")
+                print("Extracting tiles...")
                 with tpkutils.TPK(downloaded_tpk_location) as tpk:
                     zoom_list = list(
                         range(MINIMUM_ZOOM_LEVEL, MAXIMUM_ZOOM_LEVEL + 1))
                     tpk.to_disk(f"{shapefile_tiles_folder}/xyz",
                                 zoom=zoom_list, drop_empty=True)
 
+                print("Zipping tiles...")
                 shutil.make_archive(
                     f"{shapefile_tiles_folder}/zip/layer", 'zip', f"{shapefile_tiles_folder}/xyz")
+
+                if TPK == False:
+                    shutil.rmtree(f"{shapefile_tiles_folder}/tpk")
+                    print("Deleting TPK file...")
+                if XYZ == False:
+                    shutil.rmtree(f"{shapefile_tiles_folder}/xyz")
+                    print("Deleting XYZ files...")
+                if ZIP == False:
+                    shutil.rmtree(f"{shapefile_tiles_folder}/zip")
+                    print("Deleting ZIP file...")
                 print("Done!")
                 success = True
             except exceptions.InvalidTokenException:
