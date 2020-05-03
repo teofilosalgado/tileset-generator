@@ -74,9 +74,11 @@ def main():
             except exceptions.InvalidTokenException:
                 print("Token expired, generating a new one...")
                 token = authentication.authenticate(USERNAME, PASSWORD)
+                continue
             except Exception as exception:
                 print("Unexpected error: ", exception)
                 attempt = attempt + 1
+                continue
 
 
 if __name__ == "__main__":
