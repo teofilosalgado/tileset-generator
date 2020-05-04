@@ -74,6 +74,7 @@ def main():
             except exceptions.InvalidTokenException:
                 print("Token expired, generating a new one...")
                 token = authentication.authenticate(USERNAME, PASSWORD)
+                downloader = Downloader(token, MAPSERVER_URL)
                 continue
             except Exception as exception:
                 print("Unexpected error: ", exception)
