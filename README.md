@@ -1,6 +1,4 @@
 # tileset-generator
-
-## What it does?
 This application was intended to make offline maps easier, generating all the tilesets you may need to serve to your apps. We all know, not all map frameworks/libraries use or prefer the same tileset scheme for offline loading. In some applications we need our tiles in `ZXY` folders, sometimes we need it in specific package formats like `.mbtiles` or `.mmpk`. So to mitigate this problem, this script can automatically generate basemaps for most of the tiling schemes out there, based on any given area of interest.
 
 ## How it works?
